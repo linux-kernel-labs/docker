@@ -8,6 +8,12 @@ RUN apt-get update && \
     apt-get install -y sudo make git python python-pip ditaa && \
     rm -rf /var/lib/apt/lists/*
 
+# binfmt requires priviledge execution which is not available on circleci
+RUN rm /usr/bin/ditaa && \
+    echo '#!/bin/sh' > /usr/bin/ditaa && \
+    echo 'jarwrapper /usr/share/ditaa/ditaa.jar $@' >> /usr/bin/ditaa && \
+    chmod a+rx /usr/bin/ditaa
+
 RUN useradd -ms /bin/bash ubuntu && adduser ubuntu sudo && echo -n 'ubuntu:ubuntu' | chpasswd
 
 # Enable passwordless sudo for users under the "sudo" group
@@ -18,10 +24,6 @@ RUN sed -i.bkp -e \
 USER ubuntu
 WORKDIR /home/ubuntu/
 
-ENV PATH ${PATH}:/home/ubuntu/.local
+ENV PATH ${PATH}:/home/ubuntu/.local/bin
 
-RUN git clone git://github.com/linux-kernel-labs/linux-kernel-labs.github.io.git
-
-RUN git clone git://github.com/linux-kernel-labs/linux.git
-
-RUN pip install -r linux/tools/labs/requirements.txt
+RUN pip install Sphinx==1.6.7 sphinx_rtd_theme hieroglyph==1.0
