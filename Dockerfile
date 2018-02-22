@@ -5,7 +5,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:git-core/ppa && \
     apt-get update && \
-    apt-get install -y sudo make git python python-pip ditaa && \
+    apt-get install -y sudo make git python python-pip ditaa npm nodejs-legacy && \
     rm -rf /var/lib/apt/lists/*
 
 # binfmt requires priviledge execution which is not available on circleci
@@ -13,6 +13,8 @@ RUN rm /usr/bin/ditaa && \
     echo '#!/bin/sh' > /usr/bin/ditaa && \
     echo 'jarwrapper /usr/share/ditaa/ditaa.jar $@' >> /usr/bin/ditaa && \
     chmod a+rx /usr/bin/ditaa
+
+RUN npm install -g github-status-reporter
 
 RUN useradd -ms /bin/bash ubuntu && adduser ubuntu sudo && echo -n 'ubuntu:ubuntu' | chpasswd
 
